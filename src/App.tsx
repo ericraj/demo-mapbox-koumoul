@@ -33,7 +33,7 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Demo</h1>
+      <h1>Demo Mapbox Koumoul</h1>
       <div className="MapContainer">
         <ReactMapGL
           initialViewState={{ ...initialViewport }}
