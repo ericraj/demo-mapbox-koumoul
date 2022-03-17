@@ -27,7 +27,6 @@ const sources = {
     tiles: [
       `https://koumoul.com/s/tileserver/styles/cadastre/{z}/{x}/{y}.jpg?apiKey=${KOUMOUL_TOKEN}`
     ],
-
     tileSize: 256,
     maxZoom: 20
   }
@@ -38,17 +37,17 @@ const layers = {
     id: "background-tiles-fallback",
     type: "raster",
     source: sources.mapboxRaster.id
-  },
-  backgroundTiles: {
-    id: "background-tiles",
-    type: "raster",
-    source: sources.ignRaster.id
-  },
-  backgroundCadastre: {
-    id: "background-cadastre",
-    type: "raster",
-    source: sources.koumoulCadastre.id
   }
+  // backgroundTiles: {
+  //   id: "background-tiles",
+  //   type: "raster",
+  //   source: sources.ignRaster.id
+  // }
+  // backgroundCadastre: {
+  //   id: "background-cadastre",
+  //   type: "raster",
+  //   source: sources.koumoulCadastre.id
+  // }
 };
 
 const formattedLayers = Object.values(layers);

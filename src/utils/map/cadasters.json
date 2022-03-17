@@ -1,0 +1,251 @@
+{
+  "version": 8,
+  "name": "koumoulCadastre",
+  "metadata": {
+    "mapbox:autocomposite": true,
+    "mapbox:type": "template"
+  },
+  "sources": {
+    "koumoul-cadastre": {
+      "type": "vector",
+      "url": "https://koumoul.com/s/tileserver/data/cadastre.json"
+    }
+  },
+  "layers": [
+    {
+      "id": "parcelles-lines",
+      "type": "line",
+      "source": "koumoul-cadastre",
+      "source-layer": "parcelles",
+      "layout": {
+        "line-cap": "round"
+      },
+      "minzoom": 16,
+      "interactive": true,
+      "paint": {
+        "line-color": "#ffc64c",
+        "line-width": {
+          "stops": [
+            [15, 0.5],
+            [19, 4]
+          ]
+        },
+        "line-dasharray": [1.5, 2]
+      },
+      "filter": ["!=", "id", "dumb"]
+    },
+    {
+      "id": "communes-lines-shadow",
+      "type": "line",
+      "source": "koumoul-cadastre",
+      "source-layer": "communes",
+      "minzoom": 7,
+      "layout": {
+        "line-cap": "round"
+      },
+      "paint": {
+        "line-color": "black",
+        "line-blur": {
+          "stops": [
+            [10, 3],
+            [14, 10],
+            [19.5, 20]
+          ]
+        },
+        "line-width": {
+          "stops": [
+            [10, 1.5],
+            [14, 5],
+            [19.5, 15]
+          ]
+        }
+      }
+    },
+    {
+      "id": "communes-lines",
+      "type": "line",
+      "source": "koumoul-cadastre",
+      "source-layer": "communes",
+      "minzoom": 7,
+      "layout": {
+        "line-cap": "round"
+      },
+      "paint": {
+        "line-color": "#29b394",
+        "line-width": {
+          "stops": [
+            [10, 1],
+            [14, 3],
+            [19.5, 10]
+          ]
+        }
+      }
+    },
+    {
+      "id": "communes-lines-dashes",
+      "type": "line",
+      "source": "koumoul-cadastre",
+      "source-layer": "communes",
+      "minzoom": 15,
+      "layout": {
+        "line-cap": "square"
+      },
+      "paint": {
+        "line-color": "black",
+        "line-width": {
+          "stops": [
+            [10, 0.3],
+            [14, 1],
+            [19.5, 3]
+          ]
+        },
+        "line-dasharray": [1.5, 2]
+      }
+    },
+    {
+      "id": "sections-lines",
+      "type": "line",
+      "source": "koumoul-cadastre",
+      "source-layer": "sections",
+      "minzoom": 11,
+      "layout": {
+        "visibility": "none"
+      },
+      "paint": {
+        "line-color": "white",
+        "line-width": {
+          "stops": [
+            [11, 1],
+            [14, 2]
+          ]
+        }
+      }
+    },
+    {
+      "id": "parcelles-highlight",
+      "type": "fill",
+      "source": "koumoul-cadastre",
+      "source-layer": "parcelles",
+      "layout": {},
+      "minzoom": 16,
+      "paint": {
+        "fill-color": "#ffc64c"
+      },
+      "filter": ["==", "id", "dumb"]
+    },
+    {
+      "id": "parcelles-lines-shadows-highlight",
+      "type": "line",
+      "source": "koumoul-cadastre",
+      "source-layer": "parcelles",
+      "layout": {
+        "line-cap": "round"
+      },
+      "minzoom": 14,
+      "paint": {
+        "line-color": "black",
+        "line-blur": {
+          "stops": [
+            [15, 3],
+            [19, 10]
+          ]
+        },
+        "line-width": {
+          "stops": [
+            [15, 1.5],
+            [19, 7]
+          ]
+        }
+      },
+      "filter": ["==", "id", "dumb"]
+    },
+    {
+      "id": "parcelles-lines-highlight",
+      "type": "line",
+      "source": "koumoul-cadastre",
+      "source-layer": "parcelles",
+      "layout": {
+        "line-cap": "round"
+      },
+      "minzoom": 14,
+      "paint": {
+        "line-color": "#ffc64c",
+        "line-opacity": {
+          "stops": [
+            [14, 0],
+            [16, 0.9]
+          ]
+        },
+        "line-width": {
+          "stops": [
+            [15, 0.5],
+            [19, 4]
+          ]
+        }
+      },
+      "filter": ["==", "id", "dumb"]
+    },
+    {
+      "id": "parcelles-clicked-highlight",
+      "type": "fill",
+      "source": "koumoul-cadastre",
+      "source-layer": "parcelles",
+      "layout": {},
+      "minzoom": 2,
+      "paint": {
+        "fill-color": "#ffc64c",
+        "fill-opacity": 0.5
+      },
+      "filter": ["==", "id", "dumb"]
+    },
+    {
+      "id": "parcelles-lines-hover-highlight",
+      "type": "line",
+      "source": "koumoul-cadastre",
+      "source-layer": "parcelles",
+      "layout": {
+        "line-cap": "round"
+      },
+      "minzoom": 14,
+      "paint": {
+        "line-color": "#ffc64c",
+        "line-width": {
+          "stops": [
+            [15, 0.5],
+            [19, 4]
+          ]
+        },
+        "line-dasharray": [1.5, 2]
+      },
+      "filter": ["==", "id", "dumb"]
+    },
+    {
+      "id": "parcelles",
+      "type": "fill",
+      "source": "koumoul-cadastre",
+      "source-layer": "parcelles",
+      "layout": {},
+      "minzoom": 16,
+      "paint": {
+        "fill-color": "white",
+        "fill-opacity": 0.01
+      },
+      "filter": ["!=", "id", "dumb"],
+      "interactive": true
+    },
+    {
+      "id": "parcelles-hover-highlight",
+      "type": "fill",
+      "source": "koumoul-cadastre",
+      "source-layer": "parcelles",
+      "layout": {},
+      "minzoom": 16,
+      "paint": {
+        "fill-color": "#ffc64c",
+        "fill-opacity": 0.25
+      },
+      "filter": ["==", "id", "dumb"],
+      "interactive": true
+    }
+  ]
+}
