@@ -20,16 +20,16 @@ const sources = {
     ],
     tileSize: 256,
     maxZoom: 20
-  },
-  koumoulCadastre: {
-    id: "koumoul-cadastre",
-    type: "raster",
-    tiles: [
-      `https://koumoul.com/s/tileserver/styles/cadastre/{z}/{x}/{y}.jpg?apiKey=${KOUMOUL_TOKEN}`
-    ],
-    tileSize: 256,
-    maxZoom: 20
   }
+  // koumoulCadastre: {
+  //   id: "koumoul-cadastre",
+  //   type: "raster",
+  //   tiles: [
+  //     `https://koumoul.com/s/tileserver/styles/cadastre/{z}/{x}/{y}.jpg?apiKey=${KOUMOUL_TOKEN}`
+  //   ],
+  //   tileSize: 256,
+  //   maxZoom: 20
+  // }
 };
 
 const layers = {

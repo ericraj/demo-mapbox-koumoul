@@ -1,11 +1,18 @@
-import { useState } from "react";
-import ReactMapGL, { Layer, NavigationControl, Source } from "react-map-gl";
-import data from "./data/data.json";
+import { useEffect, useState } from "react";
+import ReactMapGL, {
+  FlyToInterpolator,
+  Layer,
+  NavigationControl,
+  Source,
+  ViewportProps,
+  TRANSITION_EVENTS
+} from "react-map-gl";
 import { MAPBOX_TOKEN } from "./env";
 import { buildMapboxURI } from "./utils";
 import cadastersStyle from "./utils/map/cadasters.json";
 import mapboxStreetStyle from "./utils/map/mapbox-bright-v9.json";
 import { baseLayers, baseSources } from "./utils/map/styles";
+import * as d3 from "d3-ease";
 import "./App.css";
 import "mapbox-gl/dist/mapbox-gl.css";
 
@@ -33,10 +40,13 @@ const mapSatelliteStyle = {
   id: "satellite",
   ...mapBaseStyle,
   sources: {
-    ...mapBaseStyle.sources,
+    // ...mapBaseStyle.sources,
     "mapbox-raster": baseSources["mapbox-raster"]
   },
-  layers: [...baseLayers, ...mapBaseStyle.layers]
+  layers: [
+    ...baseLayers
+    //  ...mapBaseStyle.layers
+  ]
 };
 
 const mapStreetsStyle = {
@@ -47,50 +57,52 @@ const mapStreetsStyle = {
     ...mapboxStreetStyle.metadata
   },
   sources: {
-    ...mapBaseStyle.sources,
+    // ...mapBaseStyle.sources,
     mapbox: mapboxStreetStyle.sources.mapbox
   },
-  layers: [...mapboxStreetStyle.layers, ...mapBaseStyle.layers]
+  layers: [
+    ...mapboxStreetStyle.layers
+    // ...mapBaseStyle.layers
+  ]
+};
+
+const layerLineProps = {
+  id: "map__layer__line__id",
+  type: "line",
+  paint: {
+    "line-color": "#000",
+    "line-width": 3
+  }
+};
+
+const layerFillProps = {
+  id: "map__layer__fill__id",
+  type: "fill",
+  paint: { "fill-color": "#fff", "fill-opacity": 0.5 }
+};
+
+const initialViewportZoomOptions: ViewportProps = {
+  transitionDuration: 3000,
+  transitionInterruption: TRANSITION_EVENTS.UPDATE,
+  transitionInterpolator: new FlyToInterpolator({ speed: 1.2 }),
+  transitionEasing: d3.easeCubic
 };
 
 function App() {
-  const data1 = data[0];
-  const dataPointArray = data1.geo_point_2d.split(",");
-  const dataPoint = {
-    latitude: Number(dataPointArray[0]),
-    longitude: Number(dataPointArray[1])
-  };
-
-  const geoShape = JSON.parse(data1.geo_shape);
-
-  const layerLineProps = {
-    id: "map__parcel__layer__line__id",
-    type: "line",
-    paint: {
-      "line-color": "#000",
-      "line-width": 3,
-      "line-color-transition": { duration: 1 },
-      "line-width-transition": { duration: 1 }
-    }
-  };
-
-  const layerFillProps = {
-    id: "map__parcel__layer__fill__id",
-    type: "fill",
-    paint: { "fill-color": "#fff", "fill-opacity": 0.5 }
-  };
-
-  const initialViewport = {
-    latitude: dataPoint.latitude || 48.868992,
-    longitude: dataPoint.longitude || 2.310128,
-    zoom: 13.5,
-    maxZoom: 20
-  };
-
   let initialMapStyle = localStorage.getItem("__map_style__");
   initialMapStyle = initialMapStyle ? JSON.parse(initialMapStyle) : mapSatelliteStyle;
 
-  const [mapStyle, updateMapStyle] = useState<any>(mapSatelliteStyle);
+  const initialViewport: ViewportProps = {
+    latitude: 48.868992,
+    longitude: 2.310128,
+    zoom: 12,
+    maxZoom: 20,
+    ...initialViewportZoomOptions
+  };
+
+  const [mapStyle, updateMapStyle] = useState<any>(mapStreetsStyle);
+  const [point, updatePoint] = useState<any>(null);
+  const [viewport, setViewport] = useState<ViewportProps>(initialViewport);
 
   const toggleStyle = () => {
     updateMapStyle((prev: any) => {
@@ -99,6 +111,28 @@ function App() {
       return newStyle;
     });
   };
+
+  useEffect(() => {
+    fetch(
+      "https://geo.api.gouv.fr/communes/19275?fields=nom,code,centre,contour&format=json&geometry=contour"
+    ).then((res) =>
+      res.json().then((data) => {
+        updatePoint(data);
+      })
+    );
+  }, []);
+
+  useEffect(() => {
+    if (point) {
+      const latitude = point.centre.coordinates[1];
+      const longitude = point.centre.coordinates[0];
+      setViewport((prev) => ({
+        ...prev,
+        latitude,
+        longitude
+      }));
+    }
+  }, [point]);
 
   return (
     <div className="App">
@@ -110,16 +144,20 @@ function App() {
       </div>
       <div className="MapContainer">
         <ReactMapGL
-          initialViewState={{ ...initialViewport }}
-          mapboxAccessToken={MAPBOX_TOKEN as string}
-          mapStyle={mapStyle}
+          {...viewport}
+          mapboxApiAccessToken={MAPBOX_TOKEN as string}
           attributionControl={true}
+          onViewportChange={(nextViewport: ViewportProps) => setViewport(nextViewport)}
+          // mapStyle={mapStyle}
+          mapStyle="mapbox://styles/mapbox/streets-v11"
         >
-          <NavigationControl position="top-right" />
-          <Source type="geojson" data={geoShape}>
-            <Layer {...(layerLineProps as any)} />
-            <Layer {...(layerFillProps as any)} />
-          </Source>
+          <NavigationControl />
+          {point && (
+            <Source type="geojson" data={point.contour}>
+              <Layer {...(layerLineProps as any)} />
+              <Layer {...(layerFillProps as any)} />
+            </Source>
+          )}
         </ReactMapGL>
       </div>
     </div>
